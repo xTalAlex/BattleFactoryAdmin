@@ -44,10 +44,12 @@ class SquadController extends Controller
         $validated = $request->validate([
             'email' => 'nullable|email|max:255',
 
-            'name' => 'required|unique:squads,name|max:255',
-            'code' => 'required|unique:squads,code|max:255',
+            'name' => 'required|string|unique:squads,name|max:255',
+            'code' => 'required|string|unique:squads,code|max:255',
+            'requires_approval' => 'nullable|boolean',
+            'country' => 'nullable|string|size:2',
+            'rank' => 'nullable|string|max:8',
             'description' => 'nullable|max:300',
-            'country' => 'nullable|size:2',
         ]);
 
         if($validated['email'])

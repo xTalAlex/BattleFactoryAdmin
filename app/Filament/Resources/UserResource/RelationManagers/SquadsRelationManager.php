@@ -24,7 +24,7 @@ class SquadsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                \Filament\Forms\Components\Group::make()
+                Forms\Components\Group::make()
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
@@ -35,17 +35,10 @@ class SquadsRelationManager extends RelationManager
                     ])
                     ->columns(['md' => 2])
                     ->columnSpan('full'),
-                Forms\Components\RichEditor::make('description')
-                    ->disableToolbarButtons([
-                        'attachFiles',
-                    ])
-                    ->maxLength(300)
-                    ->columnSpan('full'),
-                \Filament\Forms\Components\Group::make()
+                Forms\Components\Group::make()
                     ->schema([
-                        Forms\Components\TextInput::make('link')
-                            ->maxLength(255)
-                            ->columnSpan(['md'=>2]),
+                        Forms\Components\Select::make('rank')
+                            ->options(config('unite.squad_ranks')),
                         Forms\Components\Select::make('country')
                             ->searchable()
                             ->getSearchResultsUsing(fn (string $search) => 
@@ -58,10 +51,18 @@ class SquadsRelationManager extends RelationManager
                                     ->mapWithKeys( fn($item,$key) => [ $key => $item['name'] ])
                             )
                             ->getOptionLabelUsing(fn ($value): ?string => country($value)->getName()),
+                    ])->columns(['md' => 2])
+                    ->columnSpan('full'),
+
+                Forms\Components\Toggle::make('requires_approval'),
+                Forms\Components\TextInput::make('link')
+                    ->maxLength(255)
+                    ->columnSpan('full'),
+                Forms\Components\RichEditor::make('description')
+                    ->disableToolbarButtons([
+                        'attachFiles',
                     ])
-                    ->columns([
-                        'md' => 3
-                    ])
+                    ->maxLength(300)
                     ->columnSpan('full'),
             ]);
     }
@@ -79,6 +80,11 @@ class SquadsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('code')
                     ->toggleable()
                     ->searchable(),
+                Tables\Columns\BadgeColumn::make('rank')
+                    ->colors([
+                        'primary',
+                    ])
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('description')
                     ->limit(20)
                     ->wrap()
@@ -94,7 +100,10 @@ class SquadsRelationManager extends RelationManager
                     )
                     ->description(fn (Squad $record): string => $record->country ?? '', position: 'above')
                     ->wrap()
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\BooleanColumn::make('requires_approval')
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->toggleable()

@@ -19,9 +19,11 @@ class SquadFactory extends Factory
         return [
             'name' => $this->faker->unique()->word(),
             'code' => $this->faker->unique()->regexify('([A-Z][0-9]){8}'),
+            'country' => $this->faker->optional()->countryCode(),
+            'requires_approval' => $this->faker->boolean(),
+            'rank' => $this->faker->optional()->randomKey(config('unite.squad_ranks')),
             'description' => $this->faker->optional()->text(rand(10,300)),
             'link' => $this->faker->optional()->url(),
-            'country' => $this->faker->optional()->countryCode(),
         ];
     }
 }

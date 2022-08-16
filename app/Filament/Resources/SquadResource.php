@@ -27,17 +27,17 @@ class SquadResource extends Resource
     {
         return $form
             ->schema([
-                \Filament\Forms\Components\Grid::make([
+                Forms\Components\Grid::make([
                     'default' => 1,
                     'md' => 2,
                     'lg' => 3,
                 ])
                 ->schema([
-                    \Filament\Forms\Components\Group::make()
+                    Forms\Components\Group::make()
                         ->schema([
-                            \Filament\Forms\Components\Card::make()
+                            Forms\Components\Card::make()
                                 ->schema([
-                                    \Filament\Forms\Components\Group::make()
+                                    Forms\Components\Group::make()
                                         ->schema([
                                             Forms\Components\TextInput::make('name')
                                                 ->required()
@@ -46,16 +46,10 @@ class SquadResource extends Resource
                                                 ->required()
                                                 ->maxLength(255),
                                         ])->columns(['md' => 2]),
-                                    Forms\Components\RichEditor::make('description')
-                                        ->disableToolbarButtons([
-                                            'attachFiles',
-                                        ])
-                                        ->maxLength(300),
-                                    \Filament\Forms\Components\Group::make()
+                                    Forms\Components\Group::make()
                                         ->schema([
-                                            Forms\Components\TextInput::make('link')
-                                                ->maxLength(255)
-                                                ->columnSpan(['md'=>2]),
+                                            Forms\Components\Select::make('rank')
+                                                ->options(config('unite.squad_ranks')),
                                             Forms\Components\Select::make('country')
                                                 ->searchable()
                                                 ->getSearchResultsUsing(fn (string $search) => 
@@ -69,19 +63,26 @@ class SquadResource extends Resource
                                                 )
                                                 ->getOptionLabelUsing(fn ($value): ?string => country($value)->getName()),
                                         ])->columns([
-                                            'md' => 3
-                                        ]),
-
+                                            'md' => 2
+                                        ]),                                
+                                    Forms\Components\Toggle::make('requires_approval'),
+                                    Forms\Components\TextInput::make('link')
+                                        ->maxLength(255),
+                                    Forms\Components\RichEditor::make('description')
+                                        ->disableToolbarButtons([
+                                            'attachFiles',
+                                        ])
+                                        ->maxLength(300),
                                 ])
                         ])->columnSpan(['lg' => 2]),
-                    \Filament\Forms\Components\Group::make()
+                    Forms\Components\Group::make()
                         ->schema([
-                            \Filament\Forms\Components\Card::make()
+                            Forms\Components\Card::make()
                                 ->schema([
                                     Forms\Components\Select::make('user_id')
                                         ->relationship('user','name'),
                                 ]),  
-                            \Filament\Forms\Components\Card::make()
+                            Forms\Components\Card::make()
                                 ->schema([
                                     Forms\Components\Placeholder::make('created_at')
                                         ->content(fn (?Squad $record): string => $record->created_at ?? '-' ),
@@ -114,6 +115,11 @@ class SquadResource extends Resource
                 Tables\Columns\TextColumn::make('code')
                     ->toggleable()
                     ->searchable(),
+                Tables\Columns\BadgeColumn::make('rank')
+                    ->colors([
+                        'primary',
+                    ])
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('description')
                     ->limit(20)
                     ->wrap()
@@ -129,7 +135,10 @@ class SquadResource extends Resource
                     )
                     ->description(fn (Squad $record): string => $record->country ?? '', position: 'above')
                     ->wrap()
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\BooleanColumn::make('requires_approval')
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->toggleable()
