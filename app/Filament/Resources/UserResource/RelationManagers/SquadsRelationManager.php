@@ -39,6 +39,14 @@ class SquadsRelationManager extends RelationManager
                     ->schema([
                         Forms\Components\Select::make('rank')
                             ->options(config('unite.squad_ranks')),
+                        Forms\Components\TextInput::make('active_members')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(30),
+                        ])->columns(['md' => 2])
+                    ->columnSpan('full'),
+                Forms\Components\Group::make()
+                    ->schema([
                         Forms\Components\Select::make('country')
                             ->searchable()
                             ->getSearchResultsUsing(fn (string $search) => 
@@ -51,10 +59,11 @@ class SquadsRelationManager extends RelationManager
                                     ->mapWithKeys( fn($item,$key) => [ $key => $item['name'] ])
                             )
                             ->getOptionLabelUsing(fn ($value): ?string => country($value)->getName()),
-                    ])->columns(['md' => 2])
+                        ])->columns([
+                        'md' => 2
+                    ])->columnSpan('full'), 
+                Forms\Components\Toggle::make('requires_approval')
                     ->columnSpan('full'),
-
-                Forms\Components\Toggle::make('requires_approval'),
                 Forms\Components\TextInput::make('link')
                     ->maxLength(255)
                     ->columnSpan('full'),
@@ -80,6 +89,10 @@ class SquadsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('code')
                     ->toggleable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('active_members')
+                    ->toggleable()
+                    ->searchable()
+                    ->sortable(),    
                 Tables\Columns\BadgeColumn::make('rank')
                     ->colors([
                         'primary',

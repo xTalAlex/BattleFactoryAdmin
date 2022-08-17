@@ -17,11 +17,12 @@ class SquadFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->unique()->word(),
+            'name' => $this->faker->unique()->userName(),
             'code' => $this->faker->unique()->regexify('([A-Z][0-9]){8}'),
             'country' => $this->faker->optional()->countryCode(),
             'requires_approval' => $this->faker->boolean(),
             'rank' => $this->faker->optional()->randomKey(config('unite.squad_ranks')),
+            'active_members' => $this->faker->numberBetween(1, 30),
             'description' => $this->faker->optional()->text(rand(10,300)),
             'link' => $this->faker->optional()->url(),
         ];

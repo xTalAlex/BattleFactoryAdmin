@@ -21,6 +21,7 @@ return new class extends Migration
             $table->boolean('requires_approval')->default(0);
             $table->string('country')->nullable();
             $table->string('rank')->nullable();
+            $table->unsignedInteger('active_members')->default(1);
             $table->text('description')->nullable();
             $table->string('link')->nullable();
             $table->timestamps();

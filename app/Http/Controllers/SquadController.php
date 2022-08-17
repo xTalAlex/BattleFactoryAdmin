@@ -44,15 +44,16 @@ class SquadController extends Controller
         $validated = $request->validate([
             'email' => 'nullable|email|max:255',
 
-            'name' => 'required|string|unique:squads,name|max:255',
+            'squad_name' => 'required|string|unique:squads,name|max:255',
             'code' => 'required|string|unique:squads,code|max:255',
             'requires_approval' => 'nullable|boolean',
             'country' => 'nullable|string|size:2',
             'rank' => 'nullable|string|max:8',
+            'active_members' => 'nullable|integer|min:1|max:30',
             'description' => 'nullable|max:300',
         ]);
 
-        if($validated['email'])
+        if($validated['email'] ?? false)
         {
             $random_password = Hash::make(Str::random(12));
             $user = User::firstOrCreate(
