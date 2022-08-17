@@ -67,12 +67,9 @@ class SquadsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('link')
                     ->maxLength(255)
                     ->columnSpan('full'),
-                Forms\Components\RichEditor::make('description')
-                    ->disableToolbarButtons([
-                        'attachFiles',
-                    ])
-                    ->maxLength(300)
-                    ->columnSpan('full'),
+                Forms\Components\Textarea::make('description')
+                    ->rows(4)
+                    ->maxLength(500),
             ]);
     }
 

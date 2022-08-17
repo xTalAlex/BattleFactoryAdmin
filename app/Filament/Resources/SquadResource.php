@@ -78,11 +78,9 @@ class SquadResource extends Resource
                                         ->columnSpan('full'),                                                                              
                                     Forms\Components\TextInput::make('link')
                                         ->maxLength(255),
-                                    Forms\Components\RichEditor::make('description')
-                                        ->disableToolbarButtons([
-                                            'attachFiles',
-                                        ])
-                                        ->maxLength(300),
+                                    Forms\Components\Textarea::make('description')
+                                        ->rows(4)
+                                        ->maxLength(500),
                                 ])
                         ])->columnSpan(['lg' => 2]),
                     Forms\Components\Group::make()
