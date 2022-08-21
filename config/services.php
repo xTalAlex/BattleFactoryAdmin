@@ -31,4 +31,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'slack' => [
+        'notification_webhook' => env('SLACK_NOTIFICATION_WEBHOOK'),
+    ],
+
 ];

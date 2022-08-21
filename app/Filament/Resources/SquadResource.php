@@ -41,17 +41,20 @@ class SquadResource extends Resource
                                         ->schema([
                                             Forms\Components\TextInput::make('name')
                                                 ->required()
-                                                ->maxLength(255),
+                                                ->unique(ignoreRecord: true)
+                                                ->maxLength(16),
                                             Forms\Components\TextInput::make('code')
                                                 ->required()
-                                                ->maxLength(255),
+                                                ->unique(ignoreRecord: true)
+                                                ->maxLength(9),
                                         ])->columns(['md' => 2]),
                                     Forms\Components\Group::make()
                                         ->schema([
                                             Forms\Components\Select::make('rank')
-                                                ->options(config('unite.squad_ranks')),
+                                                ->options(config('battlefactory.squad_ranks')),
                                             Forms\Components\TextInput::make('active_members')
                                                 ->numeric()
+                                                ->default(1)
                                                 ->minValue(1)
                                                 ->maxValue(30),
                                         ])->columns([
@@ -89,6 +92,8 @@ class SquadResource extends Resource
                                 ->schema([
                                     Forms\Components\Select::make('user_id')
                                         ->relationship('user','name'),
+                                    Forms\Components\Toggle::make('verified'),
+                                    Forms\Components\Toggle::make('featured'),
                                 ]),  
                             Forms\Components\Card::make()
                                 ->schema([
@@ -150,6 +155,10 @@ class SquadResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\BooleanColumn::make('requires_approval')
+                    ->toggleable(),
+                Tables\Columns\BooleanColumn::make('featured')
+                    ->toggleable(),
+                Tables\Columns\BooleanColumn::make('verified')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

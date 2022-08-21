@@ -24,6 +24,8 @@ return new class extends Migration
             $table->unsignedInteger('active_members')->default(1);
             $table->text('description')->nullable();
             $table->string('link')->nullable();
+            $table->boolean('featured')->default(0);
+            $table->boolean('verified')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')

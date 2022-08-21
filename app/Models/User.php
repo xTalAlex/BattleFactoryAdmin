@@ -63,6 +63,17 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'profile_photo_url',
     ];
 
+    /**
+     * Route notifications for the Slack channel.
+     *
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return string
+     */
+    public function routeNotificationForSlack($notification)
+    {
+        return config('services.slack.notification_webhook');
+    }
+
     public function canAccessFilament(): bool
     {
         return $this->is_admin;

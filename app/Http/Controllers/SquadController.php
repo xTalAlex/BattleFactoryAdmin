@@ -19,7 +19,7 @@ class SquadController extends Controller
      */
     public function index()
     {
-        $squads = Squad::paginate();
+        $squads = Squad::latest()->paginate();
         return SquadResource::collection($squads);
     }
 
@@ -44,8 +44,8 @@ class SquadController extends Controller
         $validated = $request->validate([
             'email' => 'nullable|email|max:255',
 
-            'name' => 'required|string|unique:squads,name|max:255',
-            'code' => 'required|string|unique:squads,code|max:255',
+            'name' => 'required|string|unique:squads,name|max:16',
+            'code' => 'required|string|unique:squads,code|max:9',
             'requires_approval' => 'nullable|boolean',
             'country' => 'nullable|string|size:2',
             'rank' => 'nullable|string|max:8',
@@ -56,14 +56,18 @@ class SquadController extends Controller
 
         if($validated['email'] ?? false)
         {
-            $random_password = Hash::make(Str::random(12));
-            $user = User::firstOrCreate(
-                ['email' => $validated['email'] ],
-                [
+            $user = User::whereEmail($validated['email'])->first();
+
+            if(!$user)
+            {
+                $random_password = Str::random(12);
+                $user = User::create([
+                    'email' => $validated['email'],
                     'name' => explode('@', $validated['email'])[0],
-                    'password' => $random_password,
-                ]
-            );
+                    'password' => Hash::make($random_password),
+                    ]);
+                $user->notify(new \App\Notifications\UserCreated($random_password));
+            }
             $request->merge(['user_id' => $user->id]);
         }
 

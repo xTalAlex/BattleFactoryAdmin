@@ -24,52 +24,83 @@ class SquadsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Group::make()
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('code')
-                            ->required()
-                            ->maxLength(255),
-                    ])
-                    ->columns(['md' => 2])
-                    ->columnSpan('full'),
-                Forms\Components\Group::make()
-                    ->schema([
-                        Forms\Components\Select::make('rank')
-                            ->options(config('unite.squad_ranks')),
-                        Forms\Components\TextInput::make('active_members')
-                            ->numeric()
-                            ->minValue(1)
-                            ->maxValue(30),
-                        ])->columns(['md' => 2])
-                    ->columnSpan('full'),
-                Forms\Components\Group::make()
-                    ->schema([
-                        Forms\Components\Select::make('country')
-                            ->searchable()
-                            ->getSearchResultsUsing(fn (string $search) => 
-                                collect(countries())
-                                    ->filter( fn($country) => 
-                                        Str::contains(Str::lower($country['name']), Str::lower($search)) 
-                                        || Str::contains(Str::lower($country['iso_3166_1_alpha2']), Str::lower($search))
-                                        || Str::contains(Str::lower($country['iso_3166_1_alpha3']), Str::lower($search))
-                                    )
-                                    ->mapWithKeys( fn($item,$key) => [ $key => $item['name'] ])
-                            )
-                            ->getOptionLabelUsing(fn ($value): ?string => country($value)->getName()),
-                        ])->columns([
-                        'md' => 2
-                    ])->columnSpan('full'), 
-                Forms\Components\Toggle::make('requires_approval')
-                    ->columnSpan('full'),
-                Forms\Components\TextInput::make('link')
-                    ->maxLength(255)
-                    ->columnSpan('full'),
-                Forms\Components\Textarea::make('description')
-                    ->rows(4)
-                    ->maxLength(500),
+                Forms\Components\Grid::make([
+                    'default' => 1,
+                    'md' => 2,
+                    'lg' => 3,
+                ])
+                ->schema([
+                    Forms\Components\Group::make()
+                        ->schema([
+                            Forms\Components\Card::make()
+                                ->schema([
+                                    Forms\Components\Group::make()
+                                        ->schema([
+                                            Forms\Components\TextInput::make('name')
+                                                ->required()
+                                                ->unique(ignoreRecord: true)
+                                                ->maxLength(16),
+                                            Forms\Components\TextInput::make('code')
+                                                ->required()
+                                                ->unique(ignoreRecord: true)
+                                                ->maxLength(9),
+                                        ])->columns(['md' => 2]),
+                                    Forms\Components\Group::make()
+                                        ->schema([
+                                            Forms\Components\Select::make('rank')
+                                                ->options(config('battlefactory.squad_ranks')),
+                                            Forms\Components\TextInput::make('active_members')
+                                                ->numeric()
+                                                ->default(1)
+                                                ->minValue(1)
+                                                ->maxValue(30),
+                                        ])->columns([
+                                            'md' => 2
+                                        ]),  
+                                    Forms\Components\Group::make()
+                                        ->schema([
+                                            Forms\Components\Select::make('country')
+                                                ->searchable()
+                                                ->getSearchResultsUsing(fn (string $search) => 
+                                                    collect(countries())
+                                                        ->filter( fn($country) => 
+                                                            Str::contains(Str::lower($country['name']), Str::lower($search)) 
+                                                            || Str::contains(Str::lower($country['iso_3166_1_alpha2']), Str::lower($search))
+                                                            || Str::contains(Str::lower($country['iso_3166_1_alpha3']), Str::lower($search))
+                                                        )
+                                                        ->mapWithKeys( fn($item,$key) => [ $key => $item['name'] ])
+                                                )
+                                                ->getOptionLabelUsing(fn ($value): ?string => country($value)->getName()),
+                                            ])->columns([
+                                            'md' => 2
+                                        ]), 
+                                    Forms\Components\Toggle::make('requires_approval')
+                                        ->columnSpan('full'),                                                                              
+                                    Forms\Components\TextInput::make('link')
+                                        ->maxLength(255),
+                                    Forms\Components\Textarea::make('description')
+                                        ->rows(4)
+                                        ->maxLength(500),
+                                ])
+                        ])->columnSpan(['lg' => 2]),
+                    Forms\Components\Group::make()
+                        ->schema([
+                            Forms\Components\Card::make()
+                                ->schema([
+                                    Forms\Components\Toggle::make('verified'),
+                                    Forms\Components\Toggle::make('featured'),
+                                ]),  
+                            Forms\Components\Card::make()
+                                ->schema([
+                                    Forms\Components\Placeholder::make('created_at')
+                                        ->content(fn (?Squad $record): string => $record->created_at ?? '-' ),
+                                    Forms\Components\Placeholder::make('updated_at')
+                                        ->content(fn (?Squad $record): string => $record->updated_at ?? '-' ),
+                                ])   
+                        ])->columnSpan(['lg' => 1]),
+                
+                ])
+                
             ]);
     }
 
@@ -113,6 +144,10 @@ class SquadsRelationManager extends RelationManager
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\BooleanColumn::make('requires_approval')
+                    ->toggleable(),
+                Tables\Columns\BooleanColumn::make('featured')
+                    ->toggleable(),
+                Tables\Columns\BooleanColumn::make('verified')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

@@ -2,6 +2,8 @@
 
 return [
 
+    'url' => 'https://battlefactory.netlify.app',
+
     'squad_ranks' => [
         'elite' => 'Elite',
         'expert'  => 'Expert',

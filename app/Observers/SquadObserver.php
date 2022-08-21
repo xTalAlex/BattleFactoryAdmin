@@ -2,7 +2,10 @@
 
 namespace App\Observers;
 
+use App\Models\User;
 use App\Models\Squad;
+use App\Notifications\SquadSubmitted;
+use Illuminate\Support\Facades\Notification;
 
 class SquadObserver
 {
@@ -14,7 +17,7 @@ class SquadObserver
      */
     public function created(Squad $squad)
     {
-        //
+        Notification::send( User::where('is_admin',true)->get() , new SquadSubmitted($squad) );
     }
 
     /**

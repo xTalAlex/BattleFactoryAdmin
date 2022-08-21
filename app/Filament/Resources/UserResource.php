@@ -43,6 +43,7 @@ class UserResource extends Resource
                                     Forms\Components\TextInput::make('email')
                                         ->email()
                                         ->required()
+                                        ->unique(ignoreRecord: true)
                                         ->maxLength(255),
                                     Forms\Components\TextInput::make('password')
                                         ->password()
@@ -56,8 +57,6 @@ class UserResource extends Resource
                                         ->dehydrated(false)
                                         ->required(fn (string $context): bool => $context === 'create') 
                                         ->maxLength(255),
-                                    Forms\Components\TextInput::make('current_team_id')
-                                        ->maxLength(2048),
                                 ]),
                                 
                         ])
@@ -67,7 +66,7 @@ class UserResource extends Resource
                             \Filament\Forms\Components\Card::make()
                                 ->schema([
                                     Forms\Components\Placeholder::make('Avatar')
-                                        ->content(fn (User $record): HtmlString => new HtmlString('<img style="margin: auto; width: 7rem;" src="'.($record->profile_photo_url).'"/>')),
+                                        ->content(fn (User $record): HtmlString => new HtmlString('<a href="'.($record->profile_photo_url).'"><img style="border-radius: 9999px; margin: auto; width: 7rem;" src="'.($record->profile_photo_url).'"/></a>')),
                                 ])->visibleOn('edit'),
                             \Filament\Forms\Components\Card::make()
                                 ->schema([
@@ -108,10 +107,6 @@ class UserResource extends Resource
                         'success' => fn ($state): bool => $state !== null,
                     ])
                     ->dateTime()
-                    ->toggleable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('current_team_id')
-                    ->searchable()
                     ->toggleable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
