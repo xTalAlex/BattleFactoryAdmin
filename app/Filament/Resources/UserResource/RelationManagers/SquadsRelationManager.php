@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
+use Closure;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Squad;
@@ -39,8 +40,15 @@ class SquadsRelationManager extends RelationManager
                                             Forms\Components\TextInput::make('name')
                                                 ->required()
                                                 ->unique(ignoreRecord: true)
-                                                ->maxLength(16),
+                                                ->maxLength(15),
                                             Forms\Components\TextInput::make('code')
+                                                ->mask(fn (Forms\Components\TextInput\Mask $mask) => 
+                                                    $mask->pattern('{#}********')
+                                                )
+                                                ->lazy()
+                                                ->afterStateUpdated(function (Closure $set, $state) {
+                                                    $set('code', strtoupper($state));
+                                                })
                                                 ->required()
                                                 ->unique(ignoreRecord: true)
                                                 ->maxLength(9),

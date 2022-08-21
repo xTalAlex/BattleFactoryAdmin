@@ -20,12 +20,12 @@ class SquadFactory extends Factory
             'name' => $this->faker->unique()->userName(),
             'code' => $this->faker->unique()->regexify('([A-Z][0-9]){8}'),
             'country' => $this->faker->optional()->countryCode(),
-            'requires_approval' => $this->faker->boolean(),
+            'requires_approval' => $this->faker->optional()->boolean(),
             'rank' => $this->faker->optional()->randomKey(config('battlefactory.squad_ranks')),
-            'active_members' => $this->faker->numberBetween(1, 30),
+            'active_members' => $this->faker->optional()->numberBetween(1, 30),
             'description' => $this->faker->optional()->text(rand(10,300)),
             'link' => $this->faker->optional()->url(),
-            'featured' => $this->faker->boolean(),
+            'featured' => $this->faker->optional()->boolean(),
             'verified' => $this->faker->optional()->boolean(),
         ];
     }

@@ -16,6 +16,21 @@ class Squad extends Model
     protected $guarded = [];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'active_members' => 'integer',
+        'requires_approval' => 'boolean',
+        'verified' => 'boolean',
+        'featured' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+
+    /**
      * The accessors to append to the model's array form.
      *
      * @var array
@@ -38,6 +53,12 @@ class Squad extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function setCodeAttribute($value)
+    {
+        if($value[0] != '#')  $value = '#'.$value;
+        $this->attributes['code'] = Str::upper($value);
+    }
     
     public function setCountryAttribute($value)
     {
@@ -51,6 +72,28 @@ class Squad extends Model
         $this->attributes['country'] = $country;
     }
 
+    public function setActiveMembersAttribute($value)
+    {
+        if(!$value)  $value = 1;
+        if($value > 30) $value = 30;
+        $this->attributes['active_members'] = $value;
+    }
+
+    public function setRequiresApprovalAttribute($value)
+    {
+        $this->attributes['requires_approval'] = ($value ?? false);
+    }
+
+    public function setFeaturedAttribute($value)
+    {
+        $this->attributes['featured'] = ($value ?? false);
+    }
+
+    public function setVerifiedAttribute($value)
+    {
+        $this->attributes['verified'] = ($value ?? false);
+    }
+
     public function getCountryFlagAttribute()
     {
         $flag = null;
@@ -62,6 +105,21 @@ class Squad extends Model
                 report($e);
             }
         return $flag;
+    }
+
+    public function rankLabel()
+    {
+        return $this->rank ? config('battlefactory.squad_ranks')[$this->rank] : null;
+    }
+
+    public function countryName()
+    {
+        return $this->country ? country($this->country)->getName() : null;
+    }
+
+    public function nameWords()
+    {
+        return array_filter(preg_split('/(?=[A-Z])/', $this->name), fn($word) => $word!='' );
     }
 
     public function rankValue()
@@ -93,6 +151,9 @@ class Squad extends Model
         $array = $this->toArray();
  
         // Customize the data array...
+        $array['rank_label'] = $this->rankLabel();
+        $array['country_name'] = $this->countryName();
+        $array['name_words'] = $this->nameWords();
         $array['rank_value'] = $this->rankValue();
  
         return $array;

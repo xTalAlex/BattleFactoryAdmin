@@ -17,7 +17,8 @@ class SquadObserver
      */
     public function created(Squad $squad)
     {
-        Notification::send( User::where('is_admin',true)->get() , new SquadSubmitted($squad) );
+        Notification::route('slack', config('services.slack.notification_webhook'))
+            ->notify(new SquadSubmitted($squad));
     }
 
     /**

@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'searchableAttributes' => ['name','code', 'description'],
+    'searchableAttributes' => ['unordered(name)','unordered(name_words)','code', 'unordered(description)'],
 
     /*
     |--------------------------------------------------------------------------
@@ -51,6 +51,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Disable Exact On Attributes
+    |--------------------------------------------------------------------------
+    |
+    | List of attributes on which you want to disable the exact ranking criterion
+    |
+    |
+    */
+
+    'disableTypoToleranceOnAttributes' => ['name','description'],
+
+    /*
+    |--------------------------------------------------------------------------
     | Attributes for Faceting
     |--------------------------------------------------------------------------
     |
@@ -64,12 +76,11 @@ return [
     */
 
     'attributesForFaceting' => [
+        'searchable(country_name)',
+        'rank_label',
         'requires_approval',
-        'country',
-        'rank',
-        'active_members',
-        'featured',
         'verified',
+        'featured',
     ],
 
     /*
@@ -83,7 +94,7 @@ return [
     |
     */
 
-    'ranking' => ['desc(created_at)','desc(updated_at)','asc(name)'],
+    'ranking' => ['desc(created_at)'],
 
     /*
     |--------------------------------------------------------------------------

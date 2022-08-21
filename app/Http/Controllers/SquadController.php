@@ -44,7 +44,7 @@ class SquadController extends Controller
         $validated = $request->validate([
             'email' => 'nullable|email|max:255',
 
-            'name' => 'required|string|unique:squads,name|max:16',
+            'name' => 'required|string|unique:squads,name|max:15',
             'code' => 'required|string|unique:squads,code|max:9',
             'requires_approval' => 'nullable|boolean',
             'country' => 'nullable|string|size:2',
@@ -70,6 +70,8 @@ class SquadController extends Controller
             }
             $request->merge(['user_id' => $user->id]);
         }
+
+        if(!$request->has('requires_approval')) $request->merge(['requires_approval' => false]);
 
         $squad = Squad::create( $request->except(['email']) );
 
