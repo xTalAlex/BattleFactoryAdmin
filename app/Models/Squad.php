@@ -114,7 +114,7 @@ class Squad extends Model
 
     public function countryName()
     {
-        return $this->country ? country($this->country)->getName() : null;
+        return $this->country ? country($this->country)->getNativeName() : null;
     }
 
     public function nameWords()
