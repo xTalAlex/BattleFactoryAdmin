@@ -56,7 +56,8 @@ class SquadsRelationManager extends RelationManager
                                     Forms\Components\Group::make()
                                         ->schema([
                                             Forms\Components\Select::make('rank')
-                                                ->options(config('battlefactory.squad_ranks')),
+                                                ->options(config('battlefactory.squad_ranks'))
+                                                ->disablePlaceholderSelection(),
                                             Forms\Components\TextInput::make('active_members')
                                                 ->numeric()
                                                 ->default(1)

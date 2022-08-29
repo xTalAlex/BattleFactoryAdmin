@@ -30,7 +30,7 @@
                 </span>
 
                 <a
-                    href="https://talale.tawk.help"
+                    href="https://battlefactory.tawk.help"
                     target="_blank"
                     rel="noopener noreferrer"
                     @class([

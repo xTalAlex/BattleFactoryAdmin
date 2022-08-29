@@ -11,6 +11,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Illuminate\Support\HtmlString;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SquadResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -23,6 +24,24 @@ class SquadResource extends Resource
     protected static ?string $model = Squad::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'code'];
+    }
+
+    protected static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with(['user']);
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Code' => $record->code,
+            'User' => $record->user ? $record->user->name : '-',
+        ];
+    }
 
     public static function form(Form $form): Form
     {
@@ -59,7 +78,8 @@ class SquadResource extends Resource
                                     Forms\Components\Group::make()
                                         ->schema([
                                             Forms\Components\Select::make('rank')
-                                                ->options(config('battlefactory.squad_ranks')),
+                                                ->options(config('battlefactory.squad_ranks'))
+                                                ->disablePlaceholderSelection(),
                                             Forms\Components\TextInput::make('active_members')
                                                 ->numeric()
                                                 ->default(1)
