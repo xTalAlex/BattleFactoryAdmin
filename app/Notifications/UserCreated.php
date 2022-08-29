@@ -44,7 +44,7 @@ class UserCreated extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject(__('Account Created'))
             ->markdown('mail.user.created',[
-                'url' => config('battlefactory.url'),
+                'url' => config('uniteagency.url'),
                 'username' => $notifiable->name,
                 'password' => $this->password,
             ]);

@@ -78,7 +78,7 @@ class SquadResource extends Resource
                                     Forms\Components\Group::make()
                                         ->schema([
                                             Forms\Components\Select::make('rank')
-                                                ->options(config('battlefactory.squad_ranks'))
+                                                ->options(config('uniteagency.squad_ranks'))
                                                 ->disablePlaceholderSelection(),
                                             Forms\Components\TextInput::make('active_members')
                                                 ->numeric()
@@ -210,7 +210,7 @@ class SquadResource extends Resource
                 Tables\Filters\Filter::make('link')->label('Has link')
                     ->query(fn (Builder $query): Builder => $query->whereNot('link', null)),    
                 Tables\Filters\MultiSelectFilter::make('rank')
-                    ->options(config('battlefactory.squad_ranks'))
+                    ->options(config('uniteagency.squad_ranks'))
                     ->indicateUsing(function (array $data): array {
                         return $data['values'];
                     }),

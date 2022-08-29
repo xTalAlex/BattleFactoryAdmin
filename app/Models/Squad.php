@@ -109,7 +109,7 @@ class Squad extends Model
 
     public function rankLabel()
     {
-        return $this->rank ? config('battlefactory.squad_ranks')[$this->rank] : null;
+        return $this->rank ? config('uniteagency.squad_ranks')[$this->rank] : null;
     }
 
     public function countryName()
@@ -129,7 +129,7 @@ class Squad extends Model
         if($this->rank)
         {
             $i = 0;
-            $squad_ranks = config('battlefactory.squad_ranks');
+            $squad_ranks = config('uniteagency.squad_ranks');
             foreach($squad_ranks as $key=>$squad_rank)
             {
                 $i++;

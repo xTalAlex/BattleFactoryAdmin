@@ -2,7 +2,7 @@
 
 return [
 
-    'url' => 'https://battlefactory.netlify.app',
+    'url' => 'https://uniteagency.netlify.app',
 
     'squad_ranks' => [
         'veteran' => 'Veteran',
