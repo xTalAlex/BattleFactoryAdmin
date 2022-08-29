@@ -199,7 +199,93 @@ class SquadResource extends Resource
             ])
             ->defaultSort('created_at','desc')
             ->filters([
-                //
+                Tables\Filters\Filter::make('featured')
+                    ->query(fn (Builder $query): Builder => $query->where('featured', true))
+                    ->toggle(), 
+                Tables\Filters\Filter::make('verified')
+                    ->query(fn (Builder $query): Builder => $query->where('verified', true))
+                    ->toggle(),
+                Tables\Filters\Filter::make('requires_approval')
+                    ->query(fn (Builder $query): Builder => $query->where('requires_approval', true)),    
+                Tables\Filters\Filter::make('link')->label('Has link')
+                    ->query(fn (Builder $query): Builder => $query->whereNot('link', null)),    
+                Tables\Filters\MultiSelectFilter::make('rank')
+                    ->options(config('battlefactory.squad_ranks'))
+                    ->indicateUsing(function (array $data): array {
+                        return $data['values'];
+                    }),
+                Tables\Filters\Filter::make('active_members')
+                    ->form([
+                        Forms\Components\TextInput::make('active_members_from')
+                            ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask
+                                ->range()
+                                ->from(1)
+                                ->to(30)
+                                ->maxValue(30)
+                            )
+                            ->lazy(),
+                        Forms\Components\TextInput::make('active_membres_to')
+                            ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask
+                                ->range()
+                                ->from(1)
+                                ->to(30)
+                                ->maxValue(30)
+                            )
+                            ->lazy(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['active_members_from'],
+                                fn (Builder $query, $count): Builder => $query->whereDate('active_members', '>=', $count),
+                            )
+                            ->when(
+                                $data['active_membres_to'],
+                                fn (Builder $query, $count): Builder => $query->whereDate('active_members', '<=', $count),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                 
+                        if ($data['active_members_from'] ?? null) {
+                            $indicators['active_members_from'] = 'Active Members from ' . $data['active_members_from'];
+                        }
+                 
+                        if ($data['active_membres_to'] ?? null) {
+                            $indicators['active_membres_to'] = 'Active Members to ' . $data['active_membres_to'];
+                        }
+                 
+                        return $indicators;
+                    }),
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from'),
+                        Forms\Components\DatePicker::make('created_until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                 
+                        if ($data['created_from'] ?? null) {
+                            $indicators['created_from'] = 'Created from ' . \Carbon\Carbon::parse($data['created_from'])->toFormattedDateString();
+                        }
+                 
+                        if ($data['created_until'] ?? null) {
+                            $indicators['created_until'] = 'Created until ' . \Carbon\Carbon::parse($data['created_until'])->toFormattedDateString();
+                        }
+                 
+                        return $indicators;
+                    })
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

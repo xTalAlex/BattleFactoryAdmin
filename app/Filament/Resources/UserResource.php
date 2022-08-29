@@ -133,7 +133,41 @@ class UserResource extends Resource
             ])
             ->defaultSort('created_at','desc')
             ->filters([
-                //
+                Tables\Filters\Filter::make('is_admin')->label('Admin')
+                    ->query(fn (Builder $query): Builder => $query->where('is_admin', true))
+                    ->toggle(),
+                Tables\Filters\Filter::make('email_verified_at')->label('Email verified')
+                    ->query(fn (Builder $query): Builder => $query->where('email_verified_at', null))
+                    ->toggle(),
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from'),
+                        Forms\Components\DatePicker::make('created_until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                 
+                        if ($data['created_from'] ?? null) {
+                            $indicators['created_from'] = 'Created from ' . \Carbon\Carbon::parse($data['created_from'])->toFormattedDateString();
+                        }
+                 
+                        if ($data['created_until'] ?? null) {
+                            $indicators['created_until'] = 'Created until ' . \Carbon\Carbon::parse($data['created_until'])->toFormattedDateString();
+                        }
+                 
+                        return $indicators;
+                    })
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
