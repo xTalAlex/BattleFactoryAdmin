@@ -19,7 +19,13 @@ class SquadController extends Controller
      */
     public function index()
     {
-        $squads = Squad::latest()->paginate();
+        $featured = Squad::featured()->get();
+
+        if($featured->count() < 9)
+            $not_featured = Squad::where('featured',false)->inRandomOrder()->take( 9 - $featured->count() )->get();
+
+        $squads = $featured->merge($not_featured);
+        
         return SquadResource::collection($squads);
     }
 

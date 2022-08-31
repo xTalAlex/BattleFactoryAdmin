@@ -41,7 +41,7 @@ class Squad extends Model
 
     public function scopeFeatured($query)
     {
-        return $query->where('featued', true);
+        return $query->where('featured', true);
     }
 
     public function scopeVerified($query)
