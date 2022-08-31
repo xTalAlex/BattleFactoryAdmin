@@ -120,7 +120,8 @@ class SquadResource extends Resource
                                 ->schema([
                                     Forms\Components\Select::make('user_id')
                                         ->relationship('user','name'),
-                                    Forms\Components\Toggle::make('verified'),
+                                    Forms\Components\Toggle::make('verified')
+                                        ->default(true),
                                     Forms\Components\Toggle::make('featured'),
                                 ]),  
                             Forms\Components\Card::make()

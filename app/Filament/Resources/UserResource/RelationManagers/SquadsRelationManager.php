@@ -96,7 +96,8 @@ class SquadsRelationManager extends RelationManager
                         ->schema([
                             Forms\Components\Card::make()
                                 ->schema([
-                                    Forms\Components\Toggle::make('verified'),
+                                    Forms\Components\Toggle::make('verified')
+                                        ->default(true),
                                     Forms\Components\Toggle::make('featured'),
                                 ]),  
                             Forms\Components\Card::make()
