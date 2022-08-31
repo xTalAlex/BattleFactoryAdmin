@@ -2,10 +2,7 @@
 
 namespace App\Observers;
 
-use App\Models\User;
 use App\Models\Squad;
-use App\Notifications\SquadSubmitted;
-use Illuminate\Support\Facades\Notification;
 
 class SquadObserver
 {
@@ -17,8 +14,7 @@ class SquadObserver
      */
     public function created(Squad $squad)
     {
-        Notification::route('slack', config('services.slack.notification_webhook'))
-            ->notify(new SquadSubmitted($squad));
+        //
     }
 
     /**

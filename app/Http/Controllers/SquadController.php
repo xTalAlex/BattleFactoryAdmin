@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Squad;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\SquadResource;
+use App\Notifications\SquadSubmitted;
+use Illuminate\Support\Facades\Notification;
 
 class SquadController extends Controller
 {
@@ -80,6 +81,9 @@ class SquadController extends Controller
         if(!$request->has('requires_approval')) $request->merge(['requires_approval' => false]);
 
         $squad = Squad::create( $request->except(['email']) );
+
+        Notification::route('slack', config('services.slack.notification_webhook'))
+            ->notify(new SquadSubmitted($squad));
 
         return new SquadResource($squad);
 
