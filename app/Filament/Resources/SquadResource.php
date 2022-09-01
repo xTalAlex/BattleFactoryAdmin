@@ -79,6 +79,7 @@ class SquadResource extends Resource
                                         ->schema([
                                             Forms\Components\Select::make('rank')
                                                 ->options(config('uniteagency.squad_ranks'))
+                                                ->default(array_key_first(config('uniteagency.squad_ranks')))
                                                 ->disablePlaceholderSelection(),
                                             Forms\Components\TextInput::make('active_members')
                                                 ->numeric()
