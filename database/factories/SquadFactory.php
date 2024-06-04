@@ -17,13 +17,13 @@ class SquadFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->unique()->userName(),
-            'code' => $this->faker->unique()->regexify('([A-Z][0-9]){8}'),
+            'name' => $this->faker->unique()->word(), // userName() max 15chars
+            'code' => $this->faker->unique()->regexify('([A-Z,0-9]){8}'),
             'country' => $this->faker->optional()->countryCode(),
             'requires_approval' => $this->faker->optional()->boolean(),
             'rank' => $this->faker->randomKey(config('uniteagency.squad_ranks')),
             'active_members' => $this->faker->optional()->numberBetween(1, 30),
-            'description' => $this->faker->optional()->text(rand(10,300)),
+            'description' => $this->faker->optional()->text(rand(10, 300)),
             'link' => $this->faker->optional()->url(),
             'featured' => $this->faker->optional()->boolean(),
             'verified' => $this->faker->optional()->boolean(),

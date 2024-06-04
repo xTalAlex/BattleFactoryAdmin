@@ -45,57 +45,54 @@ class UserResource extends Resource
                     'md' => 2,
                     'lg' => 3,
                 ])
-                ->schema([
-                    \Filament\Forms\Components\Group::make()
-                        ->schema([
-                            \Filament\Forms\Components\Card::make()
-                                ->schema([
-                                    Forms\Components\TextInput::make('name')
-                                        ->required()
-                                        ->maxLength(255),
-                                    Forms\Components\TextInput::make('email')
-                                        ->email()
-                                        ->required()
-                                        ->unique(ignoreRecord: true)
-                                        ->maxLength(255),
-                                    Forms\Components\TextInput::make('password')
-                                        ->password()
-                                        ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                                        ->dehydrated(fn ($state) => filled($state))
-                                        ->required(fn (string $context): bool => $context === 'create')
-                                        ->same('password_confirmation')
-                                        ->maxLength(255),
-                                    Forms\Components\TextInput::make('password_confirmation')
-                                        ->password()
-                                        ->dehydrated(false)
-                                        ->required(fn (string $context): bool => $context === 'create') 
-                                        ->maxLength(255),
-                                ]),
-                                
-                        ])
-                        ->columnSpan(['lg' => 2]),
-                    \Filament\Forms\Components\Group::make()
-                        ->schema([
-                            \Filament\Forms\Components\Card::make()
-                                ->schema([
-                                    Forms\Components\Placeholder::make('Avatar')
-                                        ->content(fn (User $record): HtmlString => new HtmlString('<a href="'.($record->profile_photo_url).'"><img style="border-radius: 9999px; margin: auto; width: 7rem;" src="'.($record->profile_photo_url).'"/></a>')),
-                                ])->visibleOn('edit'),
-                            \Filament\Forms\Components\Card::make()
-                                ->schema([
-                                    Forms\Components\Toggle::make('is_admin'),
-                                ]),
-                            \Filament\Forms\Components\Card::make()
-                                ->schema([
-                                    Forms\Components\Placeholder::make('email_verified_at')
-                                        ->content(fn (?User $record): string => $record->email_verified_at ?? '-' ),
-                                    Forms\Components\Placeholder::make('created_at')
-                                        ->content(fn (?User $record): string => $record->created_at ?? '-' ),
-                                    Forms\Components\Placeholder::make('updated_at')
-                                        ->content(fn (?User $record): string => $record->updated_at ?? '-' ),
-                                ])
-                        ])->columnSpan(['lg' => 1]),
-                ])    
+                    ->schema([
+                        \Filament\Forms\Components\Group::make()
+                            ->schema([
+                                \Filament\Forms\Components\Card::make()
+                                    ->schema([
+                                        Forms\Components\TextInput::make('name')
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('email')
+                                            ->email()
+                                            ->required()
+                                            ->unique(ignoreRecord: true)
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('password')
+                                            ->password()
+                                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                                            ->dehydrated(fn ($state) => filled($state))
+                                            ->same('password_confirmation')
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('password_confirmation')
+                                            ->password()
+                                            ->dehydrated(false)
+                                            ->maxLength(255),
+                                    ]),
+
+                            ])
+                            ->columnSpan(['lg' => 2]),
+                        \Filament\Forms\Components\Group::make()
+                            ->schema([
+                                \Filament\Forms\Components\Card::make()
+                                    ->schema([
+                                        Forms\Components\Placeholder::make('Avatar')
+                                            ->content(fn (User $record): HtmlString => new HtmlString('<a href="' . ($record->profile_photo_url) . '"><img style="border-radius: 9999px; margin: auto; width: 7rem;" src="' . ($record->profile_photo_url) . '"/></a>')),
+                                    ])->visibleOn('edit'),
+                                \Filament\Forms\Components\Card::make()
+                                    ->schema([
+                                        Forms\Components\Toggle::make('is_admin'),
+                                    ]),
+                                \Filament\Forms\Components\Card::make()
+                                    ->schema([
+                                        Forms\Components\Placeholder::make('email_verified_at')
+                                            ->content(fn (?User $record): string => $record->email_verified_at ?? '-'),
+                                        Forms\Components\Placeholder::make('created_at')
+                                            ->content(fn (?User $record): string => $record->created_at ?? '-'),
+                                        Forms\Components\Placeholder::make('updated_at')
+                                            ->content(fn (?User $record): string => $record->updated_at ?? '-'),
+                                    ])
+                            ])->columnSpan(['lg' => 1]),
+                    ])
             ]);
     }
 
@@ -105,7 +102,7 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('profile_photo_url')
                     ->label('Avatar')
-                    ->rounded()
+                    ->circular()
                     ->size(52),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
@@ -113,7 +110,8 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\BooleanColumn::make('is_admin')
+                Tables\Columns\IconColumn::make('is_admin')
+                    ->boolean()
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('email_verified_at')
                     ->colors([
@@ -131,7 +129,7 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
             ])
-            ->defaultSort('created_at','desc')
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\Filter::make('is_admin')->label('Admin')
                     ->query(fn (Builder $query): Builder => $query->where('is_admin', true))
@@ -157,15 +155,15 @@ class UserResource extends Resource
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
-                 
+
                         if ($data['created_from'] ?? null) {
                             $indicators['created_from'] = 'Created from ' . \Carbon\Carbon::parse($data['created_from'])->toFormattedDateString();
                         }
-                 
+
                         if ($data['created_until'] ?? null) {
                             $indicators['created_until'] = 'Created until ' . \Carbon\Carbon::parse($data['created_until'])->toFormattedDateString();
                         }
-                 
+
                         return $indicators;
                     })
             ])
@@ -176,14 +174,14 @@ class UserResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             RelationManagers\SquadsRelationManager::class,
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -191,5 +189,5 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
-    }    
+    }
 }
