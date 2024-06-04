@@ -56,26 +56,28 @@ class Squad extends Model
 
     public function setCodeAttribute($value)
     {
-        if($value[0] != '#')  $value = '#'.$value;
+        if ($value[0] != '#')  $value = '#' . $value;
         $this->attributes['code'] = Str::upper($value);
     }
-    
+
     public function setCountryAttribute($value)
     {
         $country = null;
-        try {
-            country($value);
-            $country = Str::lower($value);
-        } catch (Throwable $e) {
-            report($e);
+        if ($value) {
+            try {
+                country($value);
+                $country = Str::lower($value);
+            } catch (Throwable $e) {
+                report($e);
+            }
         }
         $this->attributes['country'] = $country;
     }
 
     public function setActiveMembersAttribute($value)
     {
-        if(!$value)  $value = 1;
-        if($value > 30) $value = 30;
+        if (!$value)  $value = 1;
+        if ($value > 30) $value = 30;
         $this->attributes['active_members'] = $value;
     }
 
@@ -98,7 +100,7 @@ class Squad extends Model
     {
         $flag = null;
 
-        if($this->country)
+        if ($this->country)
             try {
                 $flag = country($this->country)->getFlag();
             } catch (Throwable $e) {
@@ -119,21 +121,19 @@ class Squad extends Model
 
     public function nameWords()
     {
-        return array_filter(preg_split('/(?=[A-Z])/', $this->name), fn($word) => $word!='' );
+        return array_filter(preg_split('/(?=[A-Z])/', $this->name), fn ($word) => $word != '');
     }
 
     public function rankValue()
     {
         $value = 0;
-        
-        if($this->rank)
-        {
+
+        if ($this->rank) {
             $i = 0;
             $squad_ranks = config('uniteagency.squad_ranks');
-            foreach($squad_ranks as $key=>$squad_rank)
-            {
+            foreach ($squad_ranks as $key => $squad_rank) {
                 $i++;
-                if($this->rank == $key)
+                if ($this->rank == $key)
                     $value = $i;
             }
         }
@@ -149,13 +149,13 @@ class Squad extends Model
     public function toSearchableArray()
     {
         $array = $this->toArray();
- 
+
         // Customize the data array...
         $array['rank_label'] = $this->rankLabel();
         $array['country_name'] = $this->countryName();
         $array['name_words'] = $this->nameWords();
         $array['rank_value'] = $this->rankValue();
- 
+
         return $array;
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Observers;
 
 use App\Models\User;
+use App\Notifications\UserCreated;
+use Illuminate\Support\Facades\Log;
 
 class UserObserver
 {
@@ -14,7 +16,11 @@ class UserObserver
      */
     public function created(User $user)
     {
-        //
+        //$user->notify(new UserCreated());
+        Log::info('User created', [
+            'id' => $user->id,
+            'name' => $user->name
+        ]);
     }
 
     /**
@@ -29,6 +35,17 @@ class UserObserver
     }
 
     /**
+     * Handle the User "deleting" event.
+     *
+     * @param  \App\Models\User  $user
+     * @return void
+     */
+    public function deleting(User $user)
+    {
+        $user->squads->delete();
+    }
+
+    /**
      * Handle the User "deleted" event.
      *
      * @param  \App\Models\User  $user
@@ -36,7 +53,10 @@ class UserObserver
      */
     public function deleted(User $user)
     {
-        //
+        Log::info('User deleted', [
+            'id' => $user->id,
+            'name' => $user->name
+        ]);
     }
 
     /**

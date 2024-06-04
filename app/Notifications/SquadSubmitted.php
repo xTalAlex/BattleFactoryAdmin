@@ -38,7 +38,7 @@ class SquadSubmitted extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['slack'];
+        return ['slack', 'mail'];
     }
 
     /**
@@ -50,12 +50,12 @@ class SquadSubmitted extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                ->subject(__('New Squad'))
-                ->greeting(__('Hello!'))
-                ->line(__('A new Squad has been submitted!'))
-                ->lineIf( $this->user,  __('From') . " " .($this->user ? $this->user->email : '') )
-                ->lineIf( $this->squad->description , $this->squad->description )
-                ->action(__('Edit Squad'), $this->url);
+            ->subject(__('New Squad'))
+            ->greeting(__('Hello!'))
+            ->line(__('A new Squad has been submitted!'))
+            ->lineIf($this->user,  __('From') . " " . ($this->user ? $this->user->email : ''))
+            ->lineIf($this->squad->description, $this->squad->description)
+            ->action(__('Edit Squad'), $this->url);
     }
 
     /**
@@ -68,14 +68,14 @@ class SquadSubmitted extends Notification implements ShouldQueue
     {
         $url = $this->url;
         return (new SlackMessage)
-                    ->content(__('New Squad'))
-                    ->attachment(function ($attachment) use ($url) {
-                        $attachment->title(__('A new Squad has been submitted!'), $url)
-                                    ->fields([
-                                        __('Name') => $this->squad->name,
-                                    ])
-                                   ->content($this->squad->description);
-                    });
+            ->content(__('New Squad'))
+            ->attachment(function ($attachment) use ($url) {
+                $attachment->title(__('A new Squad has been submitted!'), $url)
+                    ->fields([
+                        __('Name') => $this->squad->name,
+                    ])
+                    ->content($this->squad->description);
+            });
     }
 
     /**

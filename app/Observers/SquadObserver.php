@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Squad;
+use Illuminate\Support\Facades\Log;
 
 class SquadObserver
 {
@@ -14,7 +15,10 @@ class SquadObserver
      */
     public function created(Squad $squad)
     {
-        //
+        Log::info('Squad created', [
+            'id' => $squad->name,
+            'code' => $squad->code
+        ]);
     }
 
     /**
@@ -36,7 +40,10 @@ class SquadObserver
      */
     public function deleted(Squad $squad)
     {
-        //
+        Log::info('Squad created', [
+            'id' => $squad->name,
+            'code' => $squad->code
+        ]);
     }
 
     /**
