@@ -42,7 +42,7 @@ class UserObserver
      */
     public function deleting(User $user)
     {
-        $user->squads->delete();
+        $user->squads()->delete();
     }
 
     /**

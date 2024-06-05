@@ -2,15 +2,15 @@
 
 namespace App\Filament\Resources\SquadResource\Pages;
 
-use App\Filament\Resources\SquadResource;
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\SquadResource;
 
 class EditSquad extends EditRecord
 {
     protected static string $resource = SquadResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,7 +22,7 @@ class SquadFactory extends Factory
             'code' => $this->faker->unique()->regexify('([A-Z,0-9]){8}'),
             'country' => $this->faker->optional()->countryCode(),
             'requires_approval' => $this->faker->optional()->boolean(),
-            'rank' => $this->faker->randomKey(config('uniteagency.squad_ranks')),
+            'rank' => Str::of($this->faker->randomKey(config('uniteagency.squad_ranks'))),
             'active_members' => $this->faker->optional()->numberBetween(1, 30),
             'description' => $this->faker->optional()->text(rand(10, 300)),
             'link' => $this->faker->optional()->url(),

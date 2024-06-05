@@ -6,11 +6,10 @@ use Closure;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Squad;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
 use Filament\Resources\Resource;
-use Illuminate\Support\HtmlString;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SquadResource\Pages;
@@ -30,7 +29,7 @@ class SquadResource extends Resource
         return ['name', 'code'];
     }
 
-    protected static function getGlobalSearchEloquentQuery(): Builder
+    public static function getGlobalSearchEloquentQuery(): Builder
     {
         return parent::getGlobalSearchEloquentQuery()->with(['user']);
     }
@@ -55,7 +54,7 @@ class SquadResource extends Resource
                     ->schema([
                         Forms\Components\Group::make()
                             ->schema([
-                                Forms\Components\Card::make()
+                                Forms\Components\Section::make()
                                     ->schema([
                                         Forms\Components\Group::make()
                                             ->schema([
@@ -64,13 +63,12 @@ class SquadResource extends Resource
                                                     ->unique(ignoreRecord: true)
                                                     ->maxLength(15),
                                                 Forms\Components\TextInput::make('code')
-                                                    ->mask(
-                                                        fn (Forms\Components\TextInput\Mask $mask) =>
-                                                        $mask->pattern('{#}********')
-                                                    )
                                                     ->lazy()
-                                                    ->afterStateUpdated(function (Closure $set, $state) {
-                                                        $set('code', strtoupper($state));
+                                                    ->afterStateUpdated(function (\Filament\Forms\Set $set, $state) {
+                                                        $set(
+                                                            'code',
+                                                            Str::upper(Str::startsWith($state, "#") ? $state : '#' . $state)
+                                                        );
                                                     })
                                                     ->required()
                                                     ->unique(ignoreRecord: true)
@@ -81,7 +79,7 @@ class SquadResource extends Resource
                                                 Forms\Components\Select::make('rank')
                                                     ->options(config('uniteagency.squad_ranks'))
                                                     ->default(array_key_first(config('uniteagency.squad_ranks')))
-                                                    ->disablePlaceholderSelection(),
+                                                    ->selectablePlaceholder(false),
                                                 Forms\Components\TextInput::make('active_members')
                                                     ->numeric()
                                                     ->default(1)
@@ -94,6 +92,7 @@ class SquadResource extends Resource
                                             ->schema([
                                                 Forms\Components\Select::make('country')
                                                     ->searchable()
+                                                    ->default('it')
                                                     ->getSearchResultsUsing(
                                                         fn (string $search) =>
                                                         collect(countries())
@@ -120,7 +119,7 @@ class SquadResource extends Resource
                             ])->columnSpan(['lg' => 2]),
                         Forms\Components\Group::make()
                             ->schema([
-                                Forms\Components\Card::make()
+                                Forms\Components\Section::make()
                                     ->schema([
                                         Forms\Components\Select::make('user_id')
                                             ->relationship('user', 'name'),
@@ -128,7 +127,7 @@ class SquadResource extends Resource
                                             ->default(true),
                                         Forms\Components\Toggle::make('featured'),
                                     ]),
-                                Forms\Components\Card::make()
+                                Forms\Components\Section::make()
                                     ->schema([
                                         Forms\Components\Placeholder::make('created_at')
                                             ->content(fn (?Squad $record): string => $record->created_at ?? '-'),
@@ -150,8 +149,8 @@ class SquadResource extends Resource
                     ->url(
                         fn (Squad $record): string =>
                         $record->user ?
-                            route('filament.resources.users.edit', $record->user_id)
-                            : route('filament.resources.users.index')
+                            route('filament.admin.resources.users.edit', $record->user_id)
+                            : route('filament.admin.resources.users.index')
                     )
                     ->toggleable()
                     ->searchable()
@@ -166,7 +165,8 @@ class SquadResource extends Resource
                     ->toggleable()
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\BadgeColumn::make('rank')
+                Tables\Columns\TextColumn::make('rank')
+                    ->badge()
                     ->colors([
                         'primary',
                     ])
@@ -178,16 +178,16 @@ class SquadResource extends Resource
                     ->searchable(),
                 Tables\Columns\IconColumn::make('link')
                     ->boolean()
-                    ->trueIcon('heroicon-o-external-link')
+                    ->trueIcon('heroicon-o-arrow-top-right-on-square')
                     ->url(fn (Squad $record): string => ($record->link ?? ''))
                     ->openUrlInNewTab(),
-                Tables\Columns\TextColumn::make('country')
-                    ->formatStateUsing(
-                        fn (?string $state): string =>
-                        $state ? country($state)->getName() : ''
-                    )
-                    ->description(fn (Squad $record): string => $record->country ?? '', position: 'above')
-                    ->wrap()
+                Tables\Columns\ViewColumn::make('country')
+                    ->view('filament.tables.columns.country-flag')
+                    // ->formatStateUsing(
+                    //     fn (?string $state): string =>
+                    //     $state ? country($state)->getName() : ''
+                    // )
+                    // ->description(fn (Squad $record): string => $record->country ?? '', position: 'above')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\IconColumn::make('requires_approval')
@@ -220,7 +220,8 @@ class SquadResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->where('requires_approval', true)),
                 Tables\Filters\Filter::make('link')->label('Has link')
                     ->query(fn (Builder $query): Builder => $query->whereNot('link', null)),
-                Tables\Filters\MultiSelectFilter::make('rank')
+                Tables\Filters\SelectFilter::make('rank')
+                    ->multiple()
                     ->options(config('uniteagency.squad_ranks'))
                     ->indicateUsing(function (array $data): array {
                         return $data['values'];
@@ -228,22 +229,14 @@ class SquadResource extends Resource
                 Tables\Filters\Filter::make('active_members')
                     ->form([
                         Forms\Components\TextInput::make('active_members_from')
-                            ->mask(
-                                fn (Forms\Components\TextInput\Mask $mask) => $mask
-                                    ->range()
-                                    ->from(1)
-                                    ->to(30)
-                                    ->maxValue(30)
-                            )
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(30)
                             ->lazy(),
                         Forms\Components\TextInput::make('active_membres_to')
-                            ->mask(
-                                fn (Forms\Components\TextInput\Mask $mask) => $mask
-                                    ->range()
-                                    ->from(1)
-                                    ->to(30)
-                                    ->maxValue(30)
-                            )
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(30)
                             ->lazy(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {

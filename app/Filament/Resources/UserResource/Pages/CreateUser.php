@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
-use Filament\Pages\Actions;
+use App\Services\UserService;
 use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\UserResource;
-use App\Services\UserService;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateUser extends CreateRecord

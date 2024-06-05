@@ -40,7 +40,7 @@ class SquadObserver
      */
     public function deleted(Squad $squad)
     {
-        Log::info('Squad created', [
+        Log::info('Squad deleted', [
             'id' => $squad->name,
             'code' => $squad->code
         ]);

@@ -60,6 +60,7 @@ class SquadController extends Controller
     {
         if (!$request->has('requires_approval')) $request->merge(['requires_approval' => false]);
         if ($request->has('rank')) $request['rank'] = Str::of($request->rank)->value();
+        if (!$request->has('rank')) $request['rank'] = array_key_first(config('uniteagency.squad_ranks'));
 
         $validated = $request->validate([
             'email' => 'nullable|email|max:255',
@@ -68,7 +69,7 @@ class SquadController extends Controller
             'code' => 'required|string|unique:squads,code|max:9',
             'requires_approval' => 'nullable|boolean',
             'country' => 'nullable|string|size:2',
-            'rank' => 'nullable|string|max:8',
+            'rank' => 'required|string|max:8',
             'active_members' => 'nullable|integer|min:1|max:30',
             'link' => 'nullable|url|max:255',
             'description' => 'nullable|max:300',

@@ -25,7 +25,7 @@ class SquadSubmitted extends Notification implements ShouldQueue
      */
     public function __construct(Squad $squad)
     {
-        $this->url = route('filament.resources.squads.edit', $squad);
+        $this->url = route('filament.admin.resources.squads.edit', $squad);
         $this->squad =  $squad;
         $this->user = $squad->user;
     }

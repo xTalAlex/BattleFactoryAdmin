@@ -111,7 +111,10 @@ class Squad extends Model
 
     public function rankLabel()
     {
-        return $this->rank ? config('uniteagency.squad_ranks')[$this->rank] : null;
+        $ranksArray = config('uniteagency.squad_ranks');
+        return $this->rank ?
+            $ranksArray[trim($this->rank)] :
+            $ranksArray[array_key_first($ranksArray)];
     }
 
     public function countryName()
@@ -133,7 +136,7 @@ class Squad extends Model
             $squad_ranks = config('uniteagency.squad_ranks');
             foreach ($squad_ranks as $key => $squad_rank) {
                 $i++;
-                if ($this->rank == $key)
+                if ($this->rank == Str::of($key))
                     $value = $i;
             }
         }

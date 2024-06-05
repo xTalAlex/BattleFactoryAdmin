@@ -5,8 +5,8 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use App\Models\User;
 use Filament\Tables;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Hash;
@@ -48,7 +48,7 @@ class UserResource extends Resource
                     ->schema([
                         \Filament\Forms\Components\Group::make()
                             ->schema([
-                                \Filament\Forms\Components\Card::make()
+                                \Filament\Forms\Components\Section::make()
                                     ->schema([
                                         Forms\Components\TextInput::make('name')
                                             ->maxLength(255),
@@ -73,16 +73,16 @@ class UserResource extends Resource
                             ->columnSpan(['lg' => 2]),
                         \Filament\Forms\Components\Group::make()
                             ->schema([
-                                \Filament\Forms\Components\Card::make()
+                                \Filament\Forms\Components\Section::make()
                                     ->schema([
                                         Forms\Components\Placeholder::make('Avatar')
                                             ->content(fn (User $record): HtmlString => new HtmlString('<a href="' . ($record->profile_photo_url) . '"><img style="border-radius: 9999px; margin: auto; width: 7rem;" src="' . ($record->profile_photo_url) . '"/></a>')),
                                     ])->visibleOn('edit'),
-                                \Filament\Forms\Components\Card::make()
+                                \Filament\Forms\Components\Section::make()
                                     ->schema([
                                         Forms\Components\Toggle::make('is_admin'),
                                     ]),
-                                \Filament\Forms\Components\Card::make()
+                                \Filament\Forms\Components\Section::make()
                                     ->schema([
                                         Forms\Components\Placeholder::make('email_verified_at')
                                             ->content(fn (?User $record): string => $record->email_verified_at ?? '-'),
@@ -113,7 +113,8 @@ class UserResource extends Resource
                 Tables\Columns\IconColumn::make('is_admin')
                     ->boolean()
                     ->sortable(),
-                Tables\Columns\BadgeColumn::make('email_verified_at')
+                Tables\Columns\TextColumn::make('email_verified_at')
+                    ->badge()
                     ->colors([
                         'success' => fn ($state): bool => $state !== null,
                     ])

@@ -24,7 +24,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     /**
      * The attributes that are mass assignable.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
@@ -36,7 +36,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -57,11 +57,24 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     /**
      * The accessors to append to the model's array form.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $appends = [
         'profile_photo_url',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
 
     /**
      * Route notifications for the Slack channel.
@@ -74,7 +87,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return config('services.slack.notification_webhook');
     }
 
-    public function canAccessFilament(): bool
+    public function canAccessPanel(\Filament\Panel $panel): bool
     {
         return $this->is_admin;
     }
@@ -95,8 +108,8 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         //     return mb_substr($segment, 0, 1);
         // })->join(' '));
         // return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=8B5CF6&background=F97316&bold=true';
-        
-        return 'https://www.gravatar.com/avatar/'.md5(Str::lower($this->email)).'?d=robohash';
+
+        return 'https://www.gravatar.com/avatar/' . md5(Str::lower($this->email)) . '?d=robohash';
     }
 
     public function squads()
