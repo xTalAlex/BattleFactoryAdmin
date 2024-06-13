@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\SquadResource\Pages;
 
-use Filament\Actions;
 use App\Filament\Resources\SquadResource;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListSquads extends ListRecords

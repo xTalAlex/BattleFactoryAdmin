@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Squad;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use App\Services\UserService;
-use App\Services\SquadService;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\SquadResource;
+use App\Models\Squad;
+use App\Models\User;
 use App\Notifications\SquadSubmitted;
+use App\Services\UserService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
 
 class SquadController extends Controller
 {
@@ -32,8 +29,9 @@ class SquadController extends Controller
     {
         $featured = Squad::featured()->get();
 
-        if ($featured->count() < 9)
+        if ($featured->count() < 9) {
             $not_featured = Squad::where('featured', false)->inRandomOrder()->take(9 - $featured->count())->get();
+        }
 
         $squads = $featured->merge($not_featured);
 
@@ -53,14 +51,19 @@ class SquadController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        if (!$request->has('requires_approval')) $request->merge(['requires_approval' => false]);
-        if ($request->has('rank')) $request['rank'] = Str::of($request->rank)->value();
-        if (!$request->has('rank')) $request['rank'] = array_key_first(config('uniteagency.squad_ranks'));
+        if (! $request->has('requires_approval')) {
+            $request->merge(['requires_approval' => false]);
+        }
+        if ($request->has('rank')) {
+            $request['rank'] = Str::of($request->rank)->value();
+        }
+        if (! $request->has('rank')) {
+            $request['rank'] = array_key_first(config('uniteagency.squad_ranks'));
+        }
 
         $validated = $request->validate([
             'email' => 'nullable|email|max:255',
@@ -78,9 +81,9 @@ class SquadController extends Controller
         if ($validated['email'] ?? false) {
             $user = User::whereEmail($validated['email'])->first();
 
-            if (!$user) {
+            if (! $user) {
                 $user = $this->userService->store([
-                    'email' => $validated['email']
+                    'email' => $validated['email'],
                 ]);
             }
             $validated = array_merge($validated, ['user_id' => $user->id]);
@@ -119,7 +122,6 @@ class SquadController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

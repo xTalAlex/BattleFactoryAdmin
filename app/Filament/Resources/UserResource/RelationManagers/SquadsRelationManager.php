@@ -2,16 +2,14 @@
 
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
-use Closure;
-use Filament\Forms;
-use Filament\Tables;
 use App\Models\Squad;
+use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class SquadsRelationManager extends RelationManager
 {
@@ -46,7 +44,7 @@ class SquadsRelationManager extends RelationManager
                                                     ->afterStateUpdated(function (\Filament\Forms\Set $set, $state) {
                                                         $set(
                                                             'code',
-                                                            Str::upper(Str::startsWith($state, "#") ? $state : '#' . $state)
+                                                            Str::upper(Str::startsWith($state, '#') ? $state : '#'.$state)
                                                         );
                                                     })
                                                     ->required()
@@ -65,7 +63,7 @@ class SquadsRelationManager extends RelationManager
                                                     ->minValue(1)
                                                     ->maxValue(30),
                                             ])->columns([
-                                                'md' => 2
+                                                'md' => 2,
                                             ]),
                                         Forms\Components\Group::make()
                                             ->schema([
@@ -73,11 +71,9 @@ class SquadsRelationManager extends RelationManager
                                                     ->searchable()
                                                     ->default('it')
                                                     ->getSearchResultsUsing(
-                                                        fn (string $search) =>
-                                                        collect(countries())
+                                                        fn (string $search) => collect(countries())
                                                             ->filter(
-                                                                fn ($country) =>
-                                                                Str::contains(Str::lower($country['name']), Str::lower($search))
+                                                                fn ($country) => Str::contains(Str::lower($country['name']), Str::lower($search))
                                                                     || Str::contains(Str::lower($country['iso_3166_1_alpha2']), Str::lower($search))
                                                                     || Str::contains(Str::lower($country['iso_3166_1_alpha3']), Str::lower($search))
                                                             )
@@ -85,7 +81,7 @@ class SquadsRelationManager extends RelationManager
                                                     )
                                                     ->getOptionLabelUsing(fn ($value): ?string => country($value)->getName()),
                                             ])->columns([
-                                                'md' => 2
+                                                'md' => 2,
                                             ]),
                                         Forms\Components\Toggle::make('requires_approval')
                                             ->columnSpan('full'),
@@ -94,7 +90,7 @@ class SquadsRelationManager extends RelationManager
                                         Forms\Components\Textarea::make('description')
                                             ->rows(4)
                                             ->maxLength(500),
-                                    ])
+                                    ]),
                             ])->columnSpan(['lg' => 2]),
                         Forms\Components\Group::make()
                             ->schema([
@@ -110,10 +106,10 @@ class SquadsRelationManager extends RelationManager
                                             ->content(fn (?Squad $record): string => $record->created_at ?? '-'),
                                         Forms\Components\Placeholder::make('updated_at')
                                             ->content(fn (?Squad $record): string => $record->updated_at ?? '-'),
-                                    ])
+                                    ]),
                             ])->columnSpan(['lg' => 1]),
 
-                    ])
+                    ]),
 
             ]);
     }
@@ -124,8 +120,7 @@ class SquadsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->url(
-                        fn (Squad $record): string =>
-                        route('filament.admin.resources.squads.edit', $record)
+                        fn (Squad $record): string => route('filament.admin.resources.squads.edit', $record)
                     )
                     ->searchable()
                     ->sortable(),
@@ -152,8 +147,7 @@ class SquadsRelationManager extends RelationManager
                     ->openUrlInNewTab(),
                 Tables\Columns\TextColumn::make('country')
                     ->formatStateUsing(
-                        fn (?string $state): string =>
-                        $state ? country($state)->getName() : ''
+                        fn (?string $state): string => $state ? country($state)->getName() : ''
                     )
                     ->description(fn (Squad $record): string => $record->country ?? '', position: 'above')
                     ->wrap()
@@ -219,11 +213,11 @@ class SquadsRelationManager extends RelationManager
                         $indicators = [];
 
                         if ($data['active_members_from'] ?? null) {
-                            $indicators['active_members_from'] = 'Active Members from ' . $data['active_members_from'];
+                            $indicators['active_members_from'] = 'Active Members from '.$data['active_members_from'];
                         }
 
                         if ($data['active_membres_to'] ?? null) {
-                            $indicators['active_membres_to'] = 'Active Members to ' . $data['active_membres_to'];
+                            $indicators['active_membres_to'] = 'Active Members to '.$data['active_membres_to'];
                         }
 
                         return $indicators;
@@ -248,15 +242,15 @@ class SquadsRelationManager extends RelationManager
                         $indicators = [];
 
                         if ($data['created_from'] ?? null) {
-                            $indicators['created_from'] = 'Created from ' . \Carbon\Carbon::parse($data['created_from'])->toFormattedDateString();
+                            $indicators['created_from'] = 'Created from '.\Carbon\Carbon::parse($data['created_from'])->toFormattedDateString();
                         }
 
                         if ($data['created_until'] ?? null) {
-                            $indicators['created_until'] = 'Created until ' . \Carbon\Carbon::parse($data['created_until'])->toFormattedDateString();
+                            $indicators['created_until'] = 'Created until '.\Carbon\Carbon::parse($data['created_until'])->toFormattedDateString();
                         }
 
                         return $indicators;
-                    })
+                    }),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),

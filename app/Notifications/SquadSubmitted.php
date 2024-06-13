@@ -2,20 +2,21 @@
 
 namespace App\Notifications;
 
-use App\Models\User;
 use App\Models\Squad;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
+use Illuminate\Notifications\Notification;
 
 class SquadSubmitted extends Notification implements ShouldQueue
 {
     use Queueable;
 
     public Squad $squad;
+
     public $user;
+
     public $url;
 
     /**
@@ -26,7 +27,7 @@ class SquadSubmitted extends Notification implements ShouldQueue
     public function __construct(Squad $squad)
     {
         $this->url = route('filament.admin.resources.squads.edit', $squad);
-        $this->squad =  $squad;
+        $this->squad = $squad;
         $this->user = $squad->user;
     }
 
@@ -53,7 +54,7 @@ class SquadSubmitted extends Notification implements ShouldQueue
             ->subject(__('New Squad'))
             ->greeting(__('Hello!'))
             ->line(__('A new Squad has been submitted!'))
-            ->lineIf($this->user,  __('From') . " " . ($this->user ? $this->user->email : ''))
+            ->lineIf($this->user, __('From').' '.($this->user ? $this->user->email : ''))
             ->lineIf($this->squad->description, $this->squad->description)
             ->action(__('Edit Squad'), $this->url);
     }
@@ -67,6 +68,7 @@ class SquadSubmitted extends Notification implements ShouldQueue
     public function toSlack($notifiable)
     {
         $url = $this->url;
+
         return (new SlackMessage)
             ->content(__('New Squad'))
             ->attachment(function ($attachment) use ($url) {

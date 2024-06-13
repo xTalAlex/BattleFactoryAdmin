@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Str;
-use Laravel\Sanctum\HasApiTokens;
-use Laravel\Jetstream\HasProfilePhoto;
-use Filament\Models\Contracts\HasAvatar;
-use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
-use Laravel\Fortify\TwoFactorAuthenticatable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
+use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Jetstream\HasProfilePhoto;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
@@ -30,7 +29,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'name',
         'email',
         'password',
-        'is_admin'
+        'is_admin',
     ];
 
     /**
@@ -109,7 +108,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         // })->join(' '));
         // return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=8B5CF6&background=F97316&bold=true';
 
-        return 'https://www.gravatar.com/avatar/' . md5(Str::lower($this->email)) . '?d=robohash';
+        return 'https://www.gravatar.com/avatar/'.md5(Str::lower($this->email)).'?d=robohash';
     }
 
     public function squads()

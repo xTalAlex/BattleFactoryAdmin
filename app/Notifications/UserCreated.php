@@ -3,25 +3,26 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Routing\Route;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+use Illuminate\Routing\Route;
 
 class UserCreated extends Notification implements ShouldQueue
 {
     use Queueable;
 
     public $password;
+
     public $url;
+
     /**
      * Create a new notification instance.
      *
      * @param password shows human readable password [not used]
-     * 
      * @return void
      */
-    public function __construct(string $password = null)
+    public function __construct(?string $password = null)
     {
         $this->password = $password;
         //@todo replace with password configuration url

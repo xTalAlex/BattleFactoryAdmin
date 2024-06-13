@@ -24,7 +24,8 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23.1",
-        "filament/upgrade": "*",
+        "filament/upgrade": "3.2",
+        "larastan/larastan": "^2.9",
         "laravel/pint": "^1.2.1",
         "laravel/sail": "^1.16.3",
         "mockery/mockery": "^1.5.1",

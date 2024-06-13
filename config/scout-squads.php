@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'searchableAttributes' => ['unordered(name)','unordered(name_words)','code', 'unordered(description)'],
+    'searchableAttributes' => ['unordered(name)', 'unordered(name_words)', 'code', 'unordered(description)'],
 
     /*
     |--------------------------------------------------------------------------
@@ -59,7 +59,7 @@ return [
     |
     */
 
-    'disableTypoToleranceOnAttributes' => ['name','description'],
+    'disableTypoToleranceOnAttributes' => ['name', 'description'],
 
     /*
     |--------------------------------------------------------------------------
@@ -114,7 +114,7 @@ return [
         'squads_rank_asc',
         'squads_rank_desc',
         'squads_active_members_asc',
-        'squads_active_members_desc'
+        'squads_active_members_desc',
     ],
 
     /*

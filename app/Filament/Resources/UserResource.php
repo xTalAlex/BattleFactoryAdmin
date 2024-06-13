@@ -2,19 +2,18 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use App\Models\User;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Illuminate\Support\HtmlString;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\User;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\HtmlString;
 
 class UserResource extends Resource
 {
@@ -32,7 +31,7 @@ class UserResource extends Resource
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Email' => $record->email
+            'Email' => $record->email,
         ];
     }
 
@@ -76,7 +75,7 @@ class UserResource extends Resource
                                 \Filament\Forms\Components\Section::make()
                                     ->schema([
                                         Forms\Components\Placeholder::make('Avatar')
-                                            ->content(fn (User $record): HtmlString => new HtmlString('<a href="' . ($record->profile_photo_url) . '"><img style="border-radius: 9999px; margin: auto; width: 7rem;" src="' . ($record->profile_photo_url) . '"/></a>')),
+                                            ->content(fn (User $record): HtmlString => new HtmlString('<a href="'.($record->profile_photo_url).'"><img style="border-radius: 9999px; margin: auto; width: 7rem;" src="'.($record->profile_photo_url).'"/></a>')),
                                     ])->visibleOn('edit'),
                                 \Filament\Forms\Components\Section::make()
                                     ->schema([
@@ -90,9 +89,9 @@ class UserResource extends Resource
                                             ->content(fn (?User $record): string => $record->created_at ?? '-'),
                                         Forms\Components\Placeholder::make('updated_at')
                                             ->content(fn (?User $record): string => $record->updated_at ?? '-'),
-                                    ])
+                                    ]),
                             ])->columnSpan(['lg' => 1]),
-                    ])
+                    ]),
             ]);
     }
 
@@ -158,15 +157,15 @@ class UserResource extends Resource
                         $indicators = [];
 
                         if ($data['created_from'] ?? null) {
-                            $indicators['created_from'] = 'Created from ' . \Carbon\Carbon::parse($data['created_from'])->toFormattedDateString();
+                            $indicators['created_from'] = 'Created from '.\Carbon\Carbon::parse($data['created_from'])->toFormattedDateString();
                         }
 
                         if ($data['created_until'] ?? null) {
-                            $indicators['created_until'] = 'Created until ' . \Carbon\Carbon::parse($data['created_until'])->toFormattedDateString();
+                            $indicators['created_until'] = 'Created until '.\Carbon\Carbon::parse($data['created_until'])->toFormattedDateString();
                         }
 
                         return $indicators;
-                    })
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

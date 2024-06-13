@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/squads', [App\Http\Controllers\SquadController::class , 'index'] );
-Route::post('/squads', [App\Http\Controllers\SquadController::class , 'store'] );
+Route::get('/squads', [App\Http\Controllers\SquadController::class, 'index']);
+Route::post('/squads', [App\Http\Controllers\SquadController::class, 'store']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

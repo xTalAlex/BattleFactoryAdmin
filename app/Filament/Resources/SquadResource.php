@@ -2,19 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use Closure;
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\Squad;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SquadResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\SquadResource\RelationManagers;
+use App\Models\Squad;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class SquadResource extends Resource
 {
@@ -67,7 +64,7 @@ class SquadResource extends Resource
                                                     ->afterStateUpdated(function (\Filament\Forms\Set $set, $state) {
                                                         $set(
                                                             'code',
-                                                            Str::upper(Str::startsWith($state, "#") ? $state : '#' . $state)
+                                                            Str::upper(Str::startsWith($state, '#') ? $state : '#'.$state)
                                                         );
                                                     })
                                                     ->required()
@@ -86,7 +83,7 @@ class SquadResource extends Resource
                                                     ->minValue(1)
                                                     ->maxValue(30),
                                             ])->columns([
-                                                'md' => 2
+                                                'md' => 2,
                                             ]),
                                         Forms\Components\Group::make()
                                             ->schema([
@@ -94,11 +91,9 @@ class SquadResource extends Resource
                                                     ->searchable()
                                                     ->default('it')
                                                     ->getSearchResultsUsing(
-                                                        fn (string $search) =>
-                                                        collect(countries())
+                                                        fn (string $search) => collect(countries())
                                                             ->filter(
-                                                                fn ($country) =>
-                                                                Str::contains(Str::lower($country['name']), Str::lower($search))
+                                                                fn ($country) => Str::contains(Str::lower($country['name']), Str::lower($search))
                                                                     || Str::contains(Str::lower($country['iso_3166_1_alpha2']), Str::lower($search))
                                                                     || Str::contains(Str::lower($country['iso_3166_1_alpha3']), Str::lower($search))
                                                             )
@@ -106,7 +101,7 @@ class SquadResource extends Resource
                                                     )
                                                     ->getOptionLabelUsing(fn ($value): ?string => country($value)->getName()),
                                             ])->columns([
-                                                'md' => 2
+                                                'md' => 2,
                                             ]),
                                         Forms\Components\Toggle::make('requires_approval')
                                             ->columnSpan('full'),
@@ -115,7 +110,7 @@ class SquadResource extends Resource
                                         Forms\Components\Textarea::make('description')
                                             ->rows(4)
                                             ->maxLength(500),
-                                    ])
+                                    ]),
                             ])->columnSpan(['lg' => 2]),
                         Forms\Components\Group::make()
                             ->schema([
@@ -133,10 +128,10 @@ class SquadResource extends Resource
                                             ->content(fn (?Squad $record): string => $record->created_at ?? '-'),
                                         Forms\Components\Placeholder::make('updated_at')
                                             ->content(fn (?Squad $record): string => $record->updated_at ?? '-'),
-                                    ])
+                                    ]),
                             ])->columnSpan(['lg' => 1]),
 
-                    ])
+                    ]),
 
             ]);
     }
@@ -147,8 +142,7 @@ class SquadResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->url(
-                        fn (Squad $record): string =>
-                        $record->user ?
+                        fn (Squad $record): string => $record->user ?
                             route('filament.admin.resources.users.edit', $record->user_id)
                             : route('filament.admin.resources.users.index')
                     )
@@ -254,11 +248,11 @@ class SquadResource extends Resource
                         $indicators = [];
 
                         if ($data['active_members_from'] ?? null) {
-                            $indicators['active_members_from'] = 'Active Members from ' . $data['active_members_from'];
+                            $indicators['active_members_from'] = 'Active Members from '.$data['active_members_from'];
                         }
 
                         if ($data['active_membres_to'] ?? null) {
-                            $indicators['active_membres_to'] = 'Active Members to ' . $data['active_membres_to'];
+                            $indicators['active_membres_to'] = 'Active Members to '.$data['active_membres_to'];
                         }
 
                         return $indicators;
@@ -283,15 +277,15 @@ class SquadResource extends Resource
                         $indicators = [];
 
                         if ($data['created_from'] ?? null) {
-                            $indicators['created_from'] = 'Created from ' . \Carbon\Carbon::parse($data['created_from'])->toFormattedDateString();
+                            $indicators['created_from'] = 'Created from '.\Carbon\Carbon::parse($data['created_from'])->toFormattedDateString();
                         }
 
                         if ($data['created_until'] ?? null) {
-                            $indicators['created_until'] = 'Created until ' . \Carbon\Carbon::parse($data['created_until'])->toFormattedDateString();
+                            $indicators['created_until'] = 'Created until '.\Carbon\Carbon::parse($data['created_until'])->toFormattedDateString();
                         }
 
                         return $indicators;
-                    })
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

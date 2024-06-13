@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use Throwable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Throwable;
 
 class Squad extends Model
 {
@@ -28,7 +28,6 @@ class Squad extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
 
     /**
      * The accessors to append to the model's array form.
@@ -56,7 +55,9 @@ class Squad extends Model
 
     public function setCodeAttribute($value)
     {
-        if ($value[0] != '#')  $value = '#' . $value;
+        if ($value[0] != '#') {
+            $value = '#'.$value;
+        }
         $this->attributes['code'] = Str::upper($value);
     }
 
@@ -76,8 +77,12 @@ class Squad extends Model
 
     public function setActiveMembersAttribute($value)
     {
-        if (!$value)  $value = 1;
-        if ($value > 30) $value = 30;
+        if (! $value) {
+            $value = 1;
+        }
+        if ($value > 30) {
+            $value = 30;
+        }
         $this->attributes['active_members'] = $value;
     }
 
@@ -100,18 +105,21 @@ class Squad extends Model
     {
         $flag = null;
 
-        if ($this->country)
+        if ($this->country) {
             try {
                 $flag = country($this->country)->getFlag();
             } catch (Throwable $e) {
                 report($e);
             }
+        }
+
         return $flag;
     }
 
     public function rankLabel()
     {
         $ranksArray = config('uniteagency.squad_ranks');
+
         return $this->rank ?
             $ranksArray[trim($this->rank)] :
             $ranksArray[array_key_first($ranksArray)];
@@ -136,12 +144,23 @@ class Squad extends Model
             $squad_ranks = config('uniteagency.squad_ranks');
             foreach ($squad_ranks as $key => $squad_rank) {
                 $i++;
-                if ($this->rank == Str::of($key))
+                if ($this->rank == Str::of($key)) {
                     $value = $i;
+                }
             }
         }
 
         return $value;
+    }
+
+    /**
+     * Determine if a record should be indexed by Scout
+     *
+     * Use "verified" column check only if users can add squads to db without admin revision
+     */
+    public function shouldBeSearchable()
+    {
+        return $this->verified;
     }
 
     /**

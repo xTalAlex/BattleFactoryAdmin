@@ -2,17 +2,13 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Squad;
-use Illuminate\Support\Facades\Log;
-use App\Http\Resources\SquadResource;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class SquadControllerTest extends TestCase
 {
-
     use RefreshDatabase;
 
     /**
@@ -60,7 +56,7 @@ class SquadControllerTest extends TestCase
 
         $this->assertDatabaseHas('squads', [
             'name' => $squad->name,
-            'user_id' => null
+            'user_id' => null,
         ]);
     }
 }

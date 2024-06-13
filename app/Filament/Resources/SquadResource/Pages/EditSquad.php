@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\SquadResource\Pages;
 
+use App\Filament\Resources\SquadResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use App\Filament\Resources\SquadResource;
 
 class EditSquad extends EditRecord
 {
